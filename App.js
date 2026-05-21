@@ -6,7 +6,7 @@ import { createNativeStackNavigator } from "@react-navigation/native-stack";
 //Screens
 import HomeScreen from './screens/HomeScreen.js'
 import CreateSessionScreen from './screens/CreateSessionScreen.js';
-import HistorySceeen from './screens/HistoryScreen.js';
+import HistoryScreen from './screens/HistoryScreen.js';
 
 export default function App() {
   const Stack = createNativeStackNavigator()
@@ -16,7 +16,7 @@ export default function App() {
       <Stack.Navigator initialRouteName="Home">
         <Stack.Screen name='Home' component={HomeScreen}/>
         <Stack.Screen name='CreateSession' component={CreateSessionScreen}/>
-        <Stack.Screen name='History' component={HistorySceeen}/>
+        <Stack.Screen name='History' component={HistoryScreen}/>
       </Stack.Navigator>
     </NavigationContainer>
   )

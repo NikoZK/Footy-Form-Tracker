@@ -1,6 +1,6 @@
 import { View, Text, Button, StyleSheet } from 'react-native'
 
-export default function HistorySceeen({ navigation }) {
+export default function HistoryScreen({ navigation }) {
     return (
         <View>
             <Text> Past activity </Text>
