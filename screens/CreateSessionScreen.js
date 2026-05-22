@@ -1,6 +1,6 @@
-import { View, Text, Button, TextInput, Alert, StyleSheet } from 'react-native'
+import { View, ScrollView, Text, Button, TextInput, Alert, StyleSheet, TouchableWithoutFeedback, Keyboard, Pressable } from 'react-native'
 import { useState } from 'react'
-import { collection, addDoc, serverTimestamp, doc, updateDoc } from 'firebase/firestore'
+import { collection, addDoc, serverTimestamp } from 'firebase/firestore'
 import { app, database } from '../firebase.js'
 import MapView, { Marker } from 'react-native-maps'
 import { globalStyles } from '../GlobalStyles.js';
@@ -9,10 +9,19 @@ export default function CreateSessionScreen({ navigation }) {
     const [sessionDocId, setSessionDocId] = useState(null)
     const [sessionType, setSessionType] = useState('')
     const [playersCount, setPlayersCount] = useState('')
-    const [weather, setWeather] = useState('')
+    const [weatherDegrees, setweatherDegrees] = useState('')
     const [pitchType, setPitchType] = useState('')
     const [sleepHours, setSleepHours] = useState('')
     const [location, setLocation] = useState(null)
+    const [position, setPosition] = useState('')
+    const [score, setScore] = useState('')
+    const [goalsLeft, setGoalsLeft] = useState('')
+    const [goalsRight, setGoalsRight] = useState('')
+    const [goalsHeader, setGoalsHeader] = useState('')
+    const [assists, setAssists] = useState('')
+    const [steps, setSteps] = useState('')
+
+
     const [region, setRegion] = useState({
         latitude: 55.7,
         longitude: 12.55,
@@ -20,37 +29,33 @@ export default function CreateSessionScreen({ navigation }) {
         longitudeDelta: 0.15
     })
 
-    const [position, setPosition] = useState('')
-    const [goalsLeft, setGoalsLeft] = useState('')
-    const [goalsRight, setGoalsRight] = useState('')
-    const [goalsHeader, setGoalsHeader] = useState('')
-    const [assists, setAssists] = useState('')
-    const [steps, setSteps] = useState('')
+    const [showMap, setShowMap] = useState(false)
 
     function handleLongPress(event) {
         const { coordinate } = event.nativeEvent
         setLocation(coordinate)
     }
 
-    const beforeSession = async () => {
-        try {
-            const newSession = await addDoc(collection(database, 'sessions'), {
-                status: "started",
-                sessionType,
-                date: serverTimestamp(),
-                playersCount: Number(playersCount),
-                weather,
-                pitchType,
-                sleepHours: Number(sleepHours),
-                location: location,
-                position,
-            })
+    const sessionData = {
+        sessionType,
+        playersCount: Number(playersCount),
+        weatherDegrees,
+        pitchType,
+        sleepHours: Number(sleepHours),
+        location,
+        position,
+        score,
+        goalsLeft: Number(goalsLeft),
+        goalsRight: Number(goalsRight),
+        goalsHeader: Number(goalsHeader),
+        totalGoals: Number(goalsHeader) + Number(goalsLeft) + Number(goalsRight),
+        assists,
+        steps,
+    }
 
-            setSessionDocId(newSession.id)
-            Alert.alert('Saved', 'Session started')
-        } catch (error) {
-            Alert.alert('Error', error.message)
-        }
+
+    const beforeSession = async () => {
+        setSessionDocId('started')
     }
 
     const afterSession = async () => {
@@ -60,15 +65,9 @@ export default function CreateSessionScreen({ navigation }) {
         }
 
         try {
-            const sessionRef = doc(database, 'sessions', sessionDocId)
-            await updateDoc(sessionRef, {
-                status: "completed",
-                goalsLeft: Number(goalsLeft),
-                goalsRight: Number(goalsRight),
-                goalsHeader: Number(goalsHeader),
-                totalGoals: Number(goalsHeader) + Number(goalsLeft) + Number(goalsRight),
-                assists,
-                steps,
+            await addDoc(collection(database, 'sessions'), {
+                date: serverTimestamp(),
+                ...sessionData,
             })
 
             Alert.alert('Saved', 'Session stored in Firestore')
@@ -79,46 +78,124 @@ export default function CreateSessionScreen({ navigation }) {
     }
 
     return (
-        <View>
-            {!sessionDocId && (
-                <>
-                    <TextInput value={sessionType} onChangeText={setSessionType} placeholder="training or match" />
-
-                    <MapView
-                        style={styles.map}
-                        initialRegion={region}
-                        onLongPress={handleLongPress}
-                    >
-                        {location && (
-                            <Marker
-                                coordinate={location}
-                                title="Session location"
-                                description="Saved"
-                            />
+        <TouchableWithoutFeedback onPress={Keyboard.dismiss} accessible={false}>
+            <ScrollView>
+                {!sessionDocId && (
+                    <>
+                        {!sessionType ? (
+                            <View style={globalStyles.group}>
+                                <Text style={globalStyles.groupLabel}>Session Type</Text>
+                                <View style={globalStyles.buttonRow}>
+                                    <Pressable
+                                        style={globalStyles.optionButton}
+                                        onPress={() => setSessionType('training')}
+                                    >
+                                        <Text style={globalStyles.optionText}>Training</Text>
+                                    </Pressable>
+                                    <Pressable
+                                        style={globalStyles.optionButton}
+                                        onPress={() => setSessionType('match')}
+                                    >
+                                        <Text style={globalStyles.optionText}>Match</Text>
+                                    </Pressable>
+                                </View>
+                            </View>
+                        ) : (
+                            <Text style={globalStyles.label}>Session type: {sessionType}</Text>
                         )}
-                    </MapView>
 
-                    <TextInput value={weather} onChangeText={setWeather} placeholder="weather" />
-                    <TextInput value={playersCount} onChangeText={setPlayersCount} placeholder="How many players attending?" />
-                    <TextInput value={sleepHours} onChangeText={setSleepHours} placeholder="How many hours of sleep?" />
-                    <TextInput value={position} onChangeText={setPosition} placeholder="What position do we play?" />
-                    {!sessionDocId && <Button title="Start session" onPress={beforeSession} />}
-                </>
-            )}
+                        <Pressable style={globalStyles.button}
+                            onPress={() => setShowMap(prev => !prev)}
+                        >
+                            <Text>Mark location on map</Text>
+                        </Pressable>
 
-            {sessionDocId && (
-                <>
-                    <TextInput value={goalsLeft} onChangeText={setGoalsLeft} placeholder="Goals left foot" keyboardType="numeric" />
-                    <TextInput value={goalsRight} onChangeText={setGoalsRight} placeholder="Goals right foot" keyboardType="numeric" />
-                    <TextInput value={goalsHeader} onChangeText={setGoalsHeader} placeholder="Goals header" keyboardType="numeric" />
-                    <TextInput value={assists} onChangeText={setAssists} placeholder="Assists" keyboardType="numeric" />
-                    <TextInput value={steps} onChangeText={setSteps} placeholder="Steps" keyboardType="numeric" />
-                    <Button title="Complete session" onPress={afterSession} />
-                </>
-            )}
-        </View>
+                        {showMap && (
+                            <MapView
+                                style={styles.map}
+                                initialRegion={region}
+                                onLongPress={handleLongPress}
+                            >
+                                {location && (
+                                    <Marker
+                                        coordinate={location}
+                                        title="Saved!"
+                                        description="Your location"
+                                    />
+                                )}
+                            </MapView>
+                        )}
+
+                            {!pitchType ? (
+                            <View style={globalStyles.group}>
+                                <Text style={globalStyles.groupLabel}>Pitch Type</Text>
+                                <View style={globalStyles.buttonRow}>
+                                    <Pressable
+                                        style={globalStyles.optionButton}
+                                        onPress={() => setPitchType('Grass')}
+                                    >
+                                        <Text style={globalStyles.optionText}>Grass</Text>
+                                    </Pressable>
+                                    <Pressable
+                                        style={globalStyles.optionButton}
+                                        onPress={() => setPitchType('Artificial')}
+                                    >
+                                        <Text style={globalStyles.optionText}>Artificial</Text>
+                                    </Pressable>
+                                </View>
+                            </View>
+                        ) : (
+                            <Text style={globalStyles.label}>Pitch type: {pitchType}</Text>
+                        )}
+
+                        <TextInput keyboardType="numeric" returnKeyType="done" style={globalStyles.input} value={weatherDegrees} onChangeText={setweatherDegrees} placeholder="How many degrees?" />
+                        <TextInput keyboardType="numeric" returnKeyType="done" style={globalStyles.input} value={playersCount} onChangeText={setPlayersCount} placeholder="How many players attending?" />
+                        <TextInput keyboardType="numeric" returnKeyType="done" style={globalStyles.input} value={sleepHours} onChangeText={setSleepHours} placeholder="How many hours of sleep?" />
+
+                        {!position ? (
+                            <View style={globalStyles.group}>
+                                <Text style={globalStyles.groupLabel}>Position</Text>
+                                <View style={globalStyles.buttonRow}>
+                                    {['Goalkeeper', 'Centerback', 'Fullback', 'Midfield', 'Winger', 'Striker'].map((pos) => (
+                                        <Pressable
+                                            key={pos}
+                                            style={globalStyles.optionButton}
+                                            onPress={() => setPosition(pos)}
+                                        >
+                                            <Text style={globalStyles.optionText}>{pos}</Text>
+                                        </Pressable>
+                                    ))}
+                                </View>
+                            </View>
+                        ) : (
+                            <Text style={globalStyles.label}>Position: {position}</Text>
+                        )}
+
+                        {!sessionDocId && <Pressable style={globalStyles.button} onPress={beforeSession}>
+                            <Text>Start session</Text>
+                        </Pressable>
+                        }
+                    </>
+                )}
+
+                {sessionDocId && (
+                    <>
+                        <View style={globalStyles.group}>
+                            <TextInput style={globalStyles.input} value={score} onChangeText={setScore} placeholder="Final score" />
+                            <TextInput keyboardType="numeric" returnKeyType="done" style={globalStyles.input} value={goalsLeft} onChangeText={setGoalsLeft} placeholder="Goals with left foot" />
+                            <TextInput keyboardType="numeric" returnKeyType="done" style={globalStyles.input} value={goalsRight} onChangeText={setGoalsRight} placeholder="Goals with right foot" />
+                            <TextInput keyboardType="numeric" returnKeyType="done" style={globalStyles.input} value={goalsHeader} onChangeText={setGoalsHeader} placeholder="Header goals" />
+                            <TextInput keyboardType="numeric" returnKeyType="done" style={globalStyles.input} value={assists} onChangeText={setAssists} placeholder="Assists" />
+                            <TextInput keyboardType="numeric" returnKeyType="done" style={globalStyles.input} value={steps} onChangeText={setSteps} placeholder="Steps" />
+                            <Button title="Complete session" onPress={afterSession} />
+                        </View>
+                    </>
+                )}
+            </ScrollView>
+        </TouchableWithoutFeedback>
     )
 }
+
 
 const styles = StyleSheet.create({
     map: {

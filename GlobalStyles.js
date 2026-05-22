@@ -31,14 +31,13 @@ export const globalStyles = StyleSheet.create({
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.1,
     shadowRadius: 8,
-    elevation: 3, 
+    elevation: 3,
   },
   formGroup: {
     marginBottom: 16,
     width: '100%',
   },
 
-  // Typography
   title: {
     fontSize: 24,
     fontWeight: '700',
@@ -51,37 +50,69 @@ export const globalStyles = StyleSheet.create({
     marginBottom: 24,
   },
   label: {
-    fontSize: 14,
+    fontSize: 13,
     fontWeight: '600',
-    color: THEME.text,
-    marginBottom: 6,
+    color: 'black',
+    margin: 12,
+    textAlign: 'center'
   },
 
-  // Form Inputs
   input: {
+    width: '100%',
     backgroundColor: THEME.surface,
     borderWidth: 1,
     borderColor: THEME.border,
-    borderRadius: THEME.radius - 4,
+    borderRadius: THEME.radius,
     paddingHorizontal: 16,
     paddingVertical: 12,
+    margin: 8,
     fontSize: 16,
     color: THEME.text,
   },
 
-  // Interactive Buttons
   button: {
-    backgroundColor: THEME.primary,
+    backgroundColor: '#fffef8',
     borderRadius: THEME.radius,
     paddingVertical: 14,
     alignItems: 'center',
     justifyContent: 'center',
-    marginTop: 8,
+    margin: 8,
     width: '100%',
   },
   buttonText: {
     color: '#FFFFFF',
     fontSize: 16,
     fontWeight: '600',
+  },
+
+  group: {
+    borderWidth: 1,
+    borderColor: THEME.border,
+    borderRadius: THEME.radius,
+    padding: 12,
+    margin: 8,
+    alignItems: 'center'
+  },
+  groupLabel: {
+    fontSize: 13,
+    fontWeight: '600',
+    color: THEME.textMuted,
+    marginBottom: 8,
+  },
+  buttonRow: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    gap: 8,
+  },
+  optionButton: {
+    borderWidth: 1,
+    borderColor: THEME.border,
+    borderRadius: THEME.radius - 4,
+    paddingVertical: 6,
+    paddingHorizontal: 14,
+  },
+  optionText: {
+    fontSize: 14,
+    color: THEME.text,
   },
 });

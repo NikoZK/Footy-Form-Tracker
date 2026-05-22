@@ -7,6 +7,7 @@ import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import HomeScreen from './screens/HomeScreen.js'
 import CreateSessionScreen from './screens/CreateSessionScreen.js';
 import HistoryScreen from './screens/HistoryScreen.js';
+import HistoryDetailScreen from './screens/HistoryDetailScreen.js';
 
 export default function App() {
   const Stack = createNativeStackNavigator()
@@ -17,6 +18,7 @@ export default function App() {
         <Stack.Screen name='Home' component={HomeScreen}/>
         <Stack.Screen name='CreateSession' component={CreateSessionScreen}/>
         <Stack.Screen name='History' component={HistoryScreen}/>
+        <Stack.Screen name='HistoryDetail' component={HistoryDetailScreen}/>
       </Stack.Navigator>
     </NavigationContainer>
   )
