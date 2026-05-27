@@ -1,7 +1,7 @@
-import { View, ScrollView, Text, Button, TextInput, Alert, StyleSheet, TouchableWithoutFeedback, Keyboard, Pressable } from 'react-native'
+import { View, ScrollView, Text, TextInput, Alert, StyleSheet, TouchableWithoutFeedback, Keyboard, Pressable } from 'react-native'
 import { useState } from 'react'
 import { collection, addDoc, serverTimestamp } from 'firebase/firestore'
-import { app, database } from '../firebase.js'
+import { database } from '../firebase.js'
 import MapView, { Marker } from 'react-native-maps'
 import { globalStyles } from '../GlobalStyles.js';
 
@@ -39,7 +39,7 @@ export default function CreateSessionScreen({ navigation }) {
     const sessionData = {
         sessionType,
         playersCount: Number(playersCount),
-        weatherDegrees,
+        weatherDegrees: Number(weatherDegrees),
         pitchType,
         sleepHours: Number(sleepHours),
         location,
@@ -52,15 +52,40 @@ export default function CreateSessionScreen({ navigation }) {
         assists,
         steps,
     }
+    
+    const emptyChecker =
+    sessionType !== '' &&
+    pitchType !== '' &&
+    position !== '' &&
+    location !== '' &&
+    weatherDegrees !== '' &&
+    playersCount !== ''
+
+    const emptyChecker2 =
+    score !== '' &&
+    goalsLeft !== '' &&
+    goalsRight !== '' &&
+    goalsHeader !== '' &&
+    assists !== '' &&
+    steps !== ''
 
 
     const beforeSession = async () => {
+        if (!emptyChecker) {
+            Alert.alert('Missing fields, please fill out all fields')
+            return
+        }
         setSessionDocId('started')
     }
 
     const afterSession = async () => {
         if (!sessionDocId) {
             Alert.alert('Error', 'No session id')
+            return
+        }
+
+        if (!emptyChecker2) {
+            Alert.alert('Missing fields, please fill out all fields')
             return
         }
 
@@ -88,42 +113,22 @@ export default function CreateSessionScreen({ navigation }) {
                                 <View style={globalStyles.buttonRow}>
                                     <Pressable
                                         style={globalStyles.optionButton}
-                                        onPress={() => setSessionType('training')}
+                                        onPress={() => setSessionType('Training')}
                                     >
                                         <Text style={globalStyles.optionText}>Training</Text>
                                     </Pressable>
                                     <Pressable
                                         style={globalStyles.optionButton}
-                                        onPress={() => setSessionType('match')}
+                                        onPress={() => setSessionType('Match')}
                                     >
                                         <Text style={globalStyles.optionText}>Match</Text>
                                     </Pressable>
                                 </View>
                             </View>
                         ) : (
-                            <Text style={globalStyles.label}>Session type: {sessionType}</Text>
-                        )}
-
-                        <Pressable style={globalStyles.button}
-                            onPress={() => setShowMap(prev => !prev)}
-                        >
-                            <Text>Mark location on map</Text>
-                        </Pressable>
-
-                        {showMap && (
-                            <MapView
-                                style={styles.map}
-                                initialRegion={region}
-                                onLongPress={handleLongPress}
-                            >
-                                {location && (
-                                    <Marker
-                                        coordinate={location}
-                                        title="Saved!"
-                                        description="Your location"
-                                    />
-                                )}
-                            </MapView>
+                            <View style={globalStyles.group}>
+                            <Text style={globalStyles.decidedText}>Session type: {sessionType}</Text>
+                            </View>
                         )}
 
                             {!pitchType ? (
@@ -145,18 +150,16 @@ export default function CreateSessionScreen({ navigation }) {
                                 </View>
                             </View>
                         ) : (
-                            <Text style={globalStyles.label}>Pitch type: {pitchType}</Text>
+                            <View style={globalStyles.group}>
+                            <Text style={globalStyles.decidedText}>Pitch type: {pitchType}</Text>
+                            </View>
                         )}
-
-                        <TextInput keyboardType="numeric" returnKeyType="done" style={globalStyles.input} value={weatherDegrees} onChangeText={setweatherDegrees} placeholder="How many degrees?" />
-                        <TextInput keyboardType="numeric" returnKeyType="done" style={globalStyles.input} value={playersCount} onChangeText={setPlayersCount} placeholder="How many players attending?" />
-                        <TextInput keyboardType="numeric" returnKeyType="done" style={globalStyles.input} value={sleepHours} onChangeText={setSleepHours} placeholder="How many hours of sleep?" />
 
                         {!position ? (
                             <View style={globalStyles.group}>
                                 <Text style={globalStyles.groupLabel}>Position</Text>
                                 <View style={globalStyles.buttonRow}>
-                                    {['Goalkeeper', 'Centerback', 'Fullback', 'Midfield', 'Winger', 'Striker'].map((pos) => (
+                                    {['Goalkeeper', 'Centerback', 'Fullback', 'Midfield', 'CAM', 'Winger', 'Striker'].map((pos) => (
                                         <Pressable
                                             key={pos}
                                             style={globalStyles.optionButton}
@@ -168,11 +171,39 @@ export default function CreateSessionScreen({ navigation }) {
                                 </View>
                             </View>
                         ) : (
-                            <Text style={globalStyles.label}>Position: {position}</Text>
+                            <View style={globalStyles.group}>
+                            <Text style={globalStyles.decidedText}>Position: {position}</Text>
+                            </View>
                         )}
 
+                        <Pressable style={globalStyles.mapButton}
+                            onPress={() => setShowMap(prev => !prev)}
+                        >
+                            <Text style={globalStyles.buttonText}>Mark location on map</Text>
+                        </Pressable>
+
+                        {showMap && (
+                            <MapView
+                                style={styles.map}
+                                initialRegion={region}
+                                onLongPress={handleLongPress}
+                            >
+                                {location && (
+                                    <Marker
+                                        coordinate={location}
+                                        title="Saved!"
+                                        description="Your location"
+                                    />
+                                )}
+                            </MapView>
+                        )}
+
+                        <TextInput keyboardType="numeric" returnKeyType="done" style={globalStyles.input} value={weatherDegrees} onChangeText={setweatherDegrees} placeholder="How many degrees?" />
+                        <TextInput keyboardType="numeric" returnKeyType="done" style={globalStyles.input} value={playersCount} onChangeText={setPlayersCount} placeholder="How many players attending?" />
+                        <TextInput keyboardType="numeric" returnKeyType="done" style={globalStyles.input} value={sleepHours} onChangeText={setSleepHours} placeholder="How many hours of sleep?" />
+
                         {!sessionDocId && <Pressable style={globalStyles.button} onPress={beforeSession}>
-                            <Text>Start session</Text>
+                            <Text style={globalStyles.buttonText}>Start session</Text>
                         </Pressable>
                         }
                     </>
@@ -187,7 +218,9 @@ export default function CreateSessionScreen({ navigation }) {
                             <TextInput keyboardType="numeric" returnKeyType="done" style={globalStyles.input} value={goalsHeader} onChangeText={setGoalsHeader} placeholder="Header goals" />
                             <TextInput keyboardType="numeric" returnKeyType="done" style={globalStyles.input} value={assists} onChangeText={setAssists} placeholder="Assists" />
                             <TextInput keyboardType="numeric" returnKeyType="done" style={globalStyles.input} value={steps} onChangeText={setSteps} placeholder="Steps" />
-                            <Button title="Complete session" onPress={afterSession} />
+                            <Pressable style={globalStyles.button} onPress={afterSession}>
+                                <Text style={globalStyles.buttonText}>Complete session</Text>
+                            </Pressable> 
                         </View>
                     </>
                 )}

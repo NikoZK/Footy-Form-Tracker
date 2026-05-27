@@ -1,4 +1,4 @@
-import { View, ScrollView, Text, Pressable } from 'react-native'
+import { View, ScrollView, Text, Pressable, ImageBackground } from 'react-native'
 import { useEffect, useState } from 'react'
 import { collection, getDocs } from 'firebase/firestore'
 import { database } from '../firebase.js'
@@ -26,24 +26,24 @@ export default function HistoryScreen({ navigation }) {
     }
 
     return (
-        <View style={globalStyles.screen}>
-            <ScrollView style={globalStyles.card}>
-                <Text style={globalStyles.title}>Past activity</Text>
-
+        <ImageBackground
+        source={require('../assets/background.jpg')}
+        style={{ flex: 1 }}
+        resizeMode="cover">
+            <ScrollView >
                 {sessions.map((session) => (
                     <Pressable
-                        key={session.id}
-                        style={globalStyles.group}
-                        onPress={() => navigation.navigate('SessionDetail', { session })}
+                    key={session.id}
+                    style={globalStyles.group}
+                    onPress={() => navigation.navigate('HistoryDetail', { session })}
                     >
-                        <Text style={globalStyles.label}>{formatDate(session.date)}</Text>
-                        <Text style={globalStyles.label}>{session.sessionType}</Text>
-                        <Text style={globalStyles.label}>{session.score}</Text>
-                        <Text style={globalStyles.label}>{session.playersCount}</Text>
-                        <Text style={globalStyles.label}>{session.position}</Text>
+                        <Text style={globalStyles.title}>{session.score}</Text>
+                        <Text style={globalStyles.label}>
+                            G/A: {Number(session.totalGoals) + Number(session.assists)} | {session.sessionType} | {session.date.toDate().toLocaleDateString()}
+                            </Text>
                     </Pressable>
                 ))}
             </ScrollView>
-        </View>
+</ImageBackground>
     )
 }

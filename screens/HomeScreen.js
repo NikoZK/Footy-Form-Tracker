@@ -1,20 +1,35 @@
-import { View, Text, Button, StyleSheet } from 'react-native'
+import { View, Text, Pressable, Image, ImageBackground } from 'react-native'
+import { globalStyles } from '../GlobalStyles.js'
 
 export default function HomeScreen({ navigation }) {
     return (
-        <View style={styles.container}>
-            <Text> Home screen with options to create new or view history </Text>
-            <Button title="Create New Session" onPress={() => navigation.navigate('CreateSession')}> </Button>
-            <Button title="View History" onPress={() => navigation.navigate('History')}> </Button>
+
+          <ImageBackground
+            source={require('../assets/background.jpg')}
+            style={{ flex: 1 }}
+            resizeMode="cover"
+          >
+    <View style={globalStyles.homeOverlay}>
+
+        <Image
+         source={require('../assets/new-logo.png')}
+         style={{ height: '50%', aspectRatio: 1, resizeMode: 'contain' }}
+        />
+
+      <View style={globalStyles.card}>
+        <Pressable style={globalStyles.button} onPress={() => navigation.navigate('CreateSession')}>
+          <Text style={globalStyles.buttonText}>Create New Session</Text>
+        </Pressable>
+
+        <Pressable style={globalStyles.button} onPress={() => navigation.navigate('History')}>
+          <Text style={globalStyles.buttonText}>View History</Text>
+        </Pressable>
+
+        <Pressable style={globalStyles.button} onPress={() => navigation.navigate('Stats')}>
+          <Text style={globalStyles.buttonText}>View Stats</Text>
+        </Pressable>
+      </View>
         </View>
+        </ImageBackground>
     )
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#fff',
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-})
