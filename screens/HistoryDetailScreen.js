@@ -1,4 +1,4 @@
-import { View, ScrollView, Text, ImageBackground } from 'react-native'
+import { View, ScrollView, Text, ImageBackground, Pressable } from 'react-native'
 import MapView, { Marker } from 'react-native-maps'
 import { globalStyles } from '../GlobalStyles.js'
 import { doc, deleteDoc } from 'firebase/firestore'
@@ -51,7 +51,7 @@ export default function HistoryDetailScreen({ route, navigation }) {
                 
                 <View style={globalStyles.group}> 
                 <Text style={globalStyles.title}>Miscellaneous</Text>
-                    <Text style={globalStyles.statText}>Weather degrees: {session.weather}</Text>
+                    <Text style={globalStyles.statText}>Weather degrees: {session.weatherDegrees}</Text>
                     <Text style={globalStyles.statText}>Hours slept: {session.sleepHours}</Text>
                 </View>
 
@@ -70,7 +70,9 @@ export default function HistoryDetailScreen({ route, navigation }) {
                     </MapView>
                 )}
                 </View>
-                <Button title="Delete session" onPress={handleDelete} />
+                <Pressable style={globalStyles.deleteButton} onPress={handleDelete} >
+                    <Text style={globalStyles.deleteText}>Delete session</Text>
+                </Pressable>
             </ScrollView>
         </ImageBackground>
     )

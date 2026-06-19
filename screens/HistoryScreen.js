@@ -11,6 +11,7 @@ export default function HistoryScreen({ navigation }) {
         try {
             const snapshot = await getDocs(collection(database, 'sessions'))
             const items = snapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() }))
+            items.sort((a, b) => b.date - a.date)
             setSessions(items)
         } catch (error) {
             console.log(error.message)

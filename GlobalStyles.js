@@ -33,10 +33,10 @@ export const globalStyles = StyleSheet.create({
     flex: 1,
     padding: 12,
     alignItems: "center",
-    backgroundColor: "rgba(238, 243, 238, 0.27)"
+    backgroundColor: "rgba(238, 243, 238, 0.27)",
   },
   card: {
-    backgroundColor: THEME.surface,
+    backgroundColor: "rgba(255, 255, 255, 0.9)",
     borderRadius: THEME.radius,
     padding: 22,
     width: "100%",
@@ -78,7 +78,7 @@ export const globalStyles = StyleSheet.create({
 
   decidedText: {
     fontSize: 18,
-    fontWeight: '600',
+    fontWeight: "600",
     color: THEME.primary,
     margin: 12,
   },
@@ -128,6 +128,23 @@ export const globalStyles = StyleSheet.create({
     margin: 8,
   },
 
+  deleteButton: {
+    backgroundColor: "#f01e1e",
+    borderRadius: THEME.radius,
+    paddingVertical: 14,
+    alignItems: "center",
+    justifyContent: "center",
+    margin: 4,
+  },
+
+  deleteText: {
+    padding: 2,
+    alignItems: "center",
+    justifyContent: "center",
+    fontSize: 16,
+    fontWeight: '600'
+  },
+
   buttonText: {
     color: "#FFFFFF",
     fontSize: 16,
@@ -141,7 +158,7 @@ export const globalStyles = StyleSheet.create({
     padding: 12,
     margin: 8,
     alignItems: "center",
-    backgroundColor: "rgba(255,255,255,0.7)",
+    backgroundColor: "rgba(255, 255, 255, 0.93)",
     minHeight: 92,
     justifyContent: "center",
   },
