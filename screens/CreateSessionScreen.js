@@ -3,10 +3,10 @@ import { useState } from 'react'
 import { collection, addDoc, serverTimestamp } from 'firebase/firestore'
 import { database } from '../firebase.js'
 import MapView, { Marker } from 'react-native-maps'
-import { globalStyles } from '../GlobalStyles.js';
+import { globalStyles } from '../GlobalStyles.js'
 
 export default function CreateSessionScreen({ navigation }) {
-    const [sessionDocId, setSessionDocId] = useState(null)
+    const [sessionStarted, setSessionStarted] = useState(false)
     const [sessionType, setSessionType] = useState('')
     const [playersCount, setPlayersCount] = useState('')
     const [weatherDegrees, setweatherDegrees] = useState('')
@@ -75,11 +75,11 @@ export default function CreateSessionScreen({ navigation }) {
             Alert.alert('Missing fields, please fill out all fields')
             return
         }
-        setSessionDocId('started')
+        setSessionStarted(true)
     }
 
     const afterSession = async () => {
-        if (!sessionDocId) {
+        if (!sessionStarted) {
             Alert.alert('Error', 'No session id')
             return
         }
@@ -105,7 +105,7 @@ export default function CreateSessionScreen({ navigation }) {
     return (
         <TouchableWithoutFeedback onPress={Keyboard.dismiss} accessible={false}>
             <ScrollView>
-                {!sessionDocId && (
+                {!sessionStarted && (
                     <>
                         {!sessionType ? (
                             <View style={globalStyles.group}>
@@ -202,14 +202,14 @@ export default function CreateSessionScreen({ navigation }) {
                         <TextInput keyboardType="numeric" returnKeyType="done" style={globalStyles.input} value={playersCount} onChangeText={setPlayersCount} placeholder="How many players attending?" />
                         <TextInput keyboardType="numeric" returnKeyType="done" style={globalStyles.input} value={sleepHours} onChangeText={setSleepHours} placeholder="How many hours of sleep?" />
 
-                        {!sessionDocId && <Pressable style={globalStyles.button} onPress={beforeSession}>
+                        {!sessionStarted && <Pressable style={globalStyles.button} onPress={beforeSession}>
                             <Text style={globalStyles.buttonText}>Start session</Text>
                         </Pressable>
                         }
                     </>
                 )}
 
-                {sessionDocId && (
+                {sessionStarted && (
                     <>
                         <View style={globalStyles.group}>
                             <TextInput style={globalStyles.input} value={score} onChangeText={setScore} placeholder="Final score" />

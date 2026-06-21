@@ -1,4 +1,4 @@
-import { StyleSheet } from "react-native";
+import { StyleSheet } from "react-native"
 
 export const THEME = {
   primary: "#51833a",
@@ -10,7 +10,7 @@ export const THEME = {
   border: "#d8e0d7",
   error: "#FF3B30",
   radius: 12,
-};
+}
 
 export const globalStyles = StyleSheet.create({
   screen: {
@@ -33,6 +33,7 @@ export const globalStyles = StyleSheet.create({
     flex: 1,
     padding: 12,
     alignItems: "center",
+    justifyContent: 'center',
     backgroundColor: "rgba(238, 243, 238, 0.27)",
   },
   card: {
@@ -157,7 +158,7 @@ export const globalStyles = StyleSheet.create({
     borderRadius: THEME.radius,
     padding: 12,
     margin: 8,
-    alignItems: "center",
+    alignItems: "start",
     backgroundColor: "rgba(255, 255, 255, 0.93)",
     minHeight: 92,
     justifyContent: "center",
@@ -195,4 +196,4 @@ export const globalStyles = StyleSheet.create({
     margin: 12,
     textAlign: "left",
   },
-});
+})

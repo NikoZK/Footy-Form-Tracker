@@ -1,50 +1,53 @@
-import { View, ScrollView, Text, Pressable, ImageBackground } from 'react-native'
-import { useEffect, useState } from 'react'
-import { collection, getDocs } from 'firebase/firestore'
-import { database } from '../firebase.js'
-import { globalStyles } from '../GlobalStyles.js'
+import { View, ScrollView, Text, Pressable, ImageBackground, FlatList, Animated } from "react-native"
+import { useEffect, useState } from "react"
+import { collection, getDocs } from "firebase/firestore"
+import { database } from "../firebase.js"
+import { globalStyles } from "../GlobalStyles.js"
 
 export default function HistoryScreen({ navigation }) {
-    const [sessions, setSessions] = useState([])
+  const [sessions, setSessions] = useState([])
+  
 
-    const loadSessions = async () => {
-        try {
-            const snapshot = await getDocs(collection(database, 'sessions'))
-            const items = snapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() }))
-            items.sort((a, b) => b.date - a.date)
-            setSessions(items)
-        } catch (error) {
-            console.log(error.message)
-        }
+  const loadSessions = async () => {
+    try {
+      const snapshot = await getDocs(collection(database, "sessions"))
+      const items = snapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() }))
+      items.sort((a, b) => b.date - a.date)
+      setSessions(items)
+    } catch (error) {
+      console.log(error.message)
     }
+  }
 
-    useEffect(() => {
-        loadSessions()
-    }, [])
+  useEffect(() => {
+    loadSessions()
+  }, [])
 
-    const formatDate = (value) => {
-        return value.toDate().toLocaleDateString()
-    }
-
-    return (
-        <ImageBackground
-        source={require('../assets/background.jpg')}
-        style={{ flex: 1 }}
-        resizeMode="cover">
-            <ScrollView >
-                {sessions.map((session) => (
-                    <Pressable
-                    key={session.id}
-                    style={globalStyles.group}
-                    onPress={() => navigation.navigate('HistoryDetail', { session })}
-                    >
-                        <Text style={globalStyles.title}>{session.score}</Text>
-                        <Text style={globalStyles.label}>
-                            G/A: {Number(session.totalGoals) + Number(session.assists)} | {session.sessionType} | {session.date.toDate().toLocaleDateString()}
-                            </Text>
-                    </Pressable>
-                ))}
-            </ScrollView>
-</ImageBackground>
-    )
+  
+  return (
+    <ImageBackground
+      source={require("../assets/background.jpg")}
+      style={{ flex: 1 }}
+      resizeMode="cover"
+    >
+      <FlatList
+        data={sessions}
+        keyExtractor={(item) => item.id}
+        renderItem={({ item }) => (
+          <Pressable
+            style={globalStyles.group}
+            onPress={() =>
+              navigation.navigate("HistoryDetail", { session: item })
+            }
+          >
+            <Text style={globalStyles.title}>{item.score}</Text>
+            <Text style={globalStyles.label}>
+              G/A: {Number(item.totalGoals) + Number(item.assists)} ┊
+              {item.sessionType} ┊ {item.date.toDate().toLocaleDateString()}
+            </Text>
+          </Pressable>
+        )}
+      />
+    </ImageBackground>
+  )
 }

@@ -1,7 +1,10 @@
 import { View, Text, Pressable, Image, ImageBackground } from 'react-native'
 import { globalStyles } from '../GlobalStyles.js'
+import { useAuth } from '../context/AuthContext.js'
 
 export default function HomeScreen({ navigation }) {
+    const { logout } = useAuth()
+
     return (
 
           <ImageBackground
@@ -27,6 +30,10 @@ export default function HomeScreen({ navigation }) {
 
         <Pressable style={globalStyles.button} onPress={() => navigation.navigate('Stats')}>
           <Text style={globalStyles.buttonText}>View Stats</Text>
+        </Pressable>
+
+        <Pressable style={globalStyles.button} onPress={logout}>
+          <Text style={globalStyles.buttonText}>Log out</Text>
         </Pressable>
       </View>
         </View>
