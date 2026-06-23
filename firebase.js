@@ -18,7 +18,6 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig)
 const database = getFirestore(app)
 
-// On web we use getAuth, on phones we use AsyncStorage so the login is remembered
 let auth
 if (Platform.OS === "web") {
   auth = getAuth(app)

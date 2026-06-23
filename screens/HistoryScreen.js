@@ -1,4 +1,4 @@
-import { View, ScrollView, Text, Pressable, ImageBackground, FlatList, Animated } from "react-native"
+import { View, Text, Pressable, ImageBackground, FlatList } from "react-native"
 import { useEffect, useState } from "react"
 import { collection, getDocs } from "firebase/firestore"
 import { database } from "../firebase.js"
@@ -6,7 +6,9 @@ import { globalStyles } from "../GlobalStyles.js"
 
 export default function HistoryScreen({ navigation }) {
   const [sessions, setSessions] = useState([])
-  
+
+  const [filter, setFilter] = useState("Training")
+  const visible = sessions.filter((session) => session.sessionType === filter)
 
   const loadSessions = async () => {
     try {
@@ -23,7 +25,6 @@ export default function HistoryScreen({ navigation }) {
     loadSessions()
   }, [])
 
-  
   return (
     <ImageBackground
       source={require("../assets/background.jpg")}
@@ -31,7 +32,7 @@ export default function HistoryScreen({ navigation }) {
       resizeMode="cover"
     >
       <FlatList
-        data={sessions}
+        data={visible}
         keyExtractor={(item) => item.id}
         renderItem={({ item }) => (
           <Pressable
@@ -42,12 +43,26 @@ export default function HistoryScreen({ navigation }) {
           >
             <Text style={globalStyles.title}>{item.score}</Text>
             <Text style={globalStyles.label}>
-              G/A: {Number(item.totalGoals) + Number(item.assists)} ┊
-              {item.sessionType} ┊ {item.date.toDate().toLocaleDateString()}
+              G/A: {Number(item.totalGoals) + Number(item.assists)} ║
+              {item.sessionType} ║ {item.date.toDate().toLocaleDateString()}
             </Text>
           </Pressable>
         )}
       />
+      <View style={globalStyles.filterButtons}>
+        <Pressable
+          style={globalStyles.optionButton}
+          onPress={() => setFilter("Training")}
+        >
+          <Text style={globalStyles.optionText}>Training</Text>
+        </Pressable>
+        <Pressable
+          style={globalStyles.optionButton}
+          onPress={() => setFilter("Match")}
+        >
+          <Text style={globalStyles.optionText}>Match</Text>
+        </Pressable>
+      </View>
     </ImageBackground>
   )
 }

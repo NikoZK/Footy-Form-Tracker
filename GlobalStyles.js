@@ -40,6 +40,7 @@ export const globalStyles = StyleSheet.create({
     backgroundColor: "rgba(255, 255, 255, 0.9)",
     borderRadius: THEME.radius,
     padding: 22,
+    marginBottom: 45,
     width: "100%",
     borderWidth: 1,
     borderColor: THEME.border,
@@ -176,6 +177,18 @@ export const globalStyles = StyleSheet.create({
     gap: 8,
     justifyContent: "center",
   },
+
+    filterButtons: {
+    flexDirection: "row",
+    flexWrap: "wrap",
+    gap: 8,
+    padding: 8,
+    justifyContent: "center",
+    backgroundColor: 'rgb(255, 255, 255)',
+    borderWidth: 0.7,
+    borderColor: 'black'
+  },
+
   optionButton: {
     borderWidth: 1,
     borderColor: THEME.border,
