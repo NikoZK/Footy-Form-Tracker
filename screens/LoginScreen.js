@@ -33,7 +33,6 @@ export default function LoginScreen() {
       <View style={globalStyles.homeOverlay}>
         <View style={globalStyles.card}>
           <Text style={globalStyles.title}>Footy Form Tracker</Text>
-          <Text style={globalStyles.subtitle}>Log in to track your sessions</Text>
 
           <TextInput
             style={globalStyles.input}

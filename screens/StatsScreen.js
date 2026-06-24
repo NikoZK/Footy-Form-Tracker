@@ -1,4 +1,4 @@
-import { View, Text, ImageBackground, ScrollView } from 'react-native'
+import { View, Text, ImageBackground, ScrollView, Pressable } from 'react-native'
 import { useEffect, useState } from 'react'
 import { collection, getDocs } from 'firebase/firestore'
 import { database } from '../firebase.js'
@@ -6,6 +6,9 @@ import { globalStyles } from '../GlobalStyles.js'
 
 export default function StatsScreen() {
     const [sessions, setSessions] = useState([])
+    const [filter, setFilter] = useState("Training")
+    
+    const visible = sessions.filter((session) => session.sessionType === filter)
 
     const loadSessions = async () => {
         try {
@@ -29,8 +32,9 @@ let totalHeadGoals = 0
 let totalSteps = 0
 let totalSleepHours = 0
 let totalWeatherDegrees = 0
+let wins = 0, draws = 0, losses = 0
 
-sessions.forEach((session) => {
+visible.forEach((session) => {
   totalGoals += Number(session.totalGoals)
   totalAssists += Number(session.assists)
   totalLeftGoals += Number(session.goalsLeft)
@@ -41,16 +45,32 @@ sessions.forEach((session) => {
   totalWeatherDegrees += Number(session.weatherDegrees)
 })
 
-const avgGoals = sessions.length ? totalGoals / sessions.length : 0
-const avgLGoals = sessions.length ? totalLeftGoals / sessions.length : 0
-const avgRGoals = sessions.length ? totalRightGoals / sessions.length : 0
-const avgHGoals = sessions.length ? totalHeadGoals / sessions.length : 0
-const avgAssists = sessions.length ? totalAssists / sessions.length : 0
-const avgSteps = sessions.length ? totalSteps / sessions.length : 0
-const avgSleep = sessions.length ? totalSleepHours / sessions.length : 0
-const avgWeatherDegrees = sessions.length ? totalWeatherDegrees / sessions.length : 0
 
-const totalSessions = sessions.length
+  function getResult(score) {
+    const [home, away] = score.split("-").map(Number)
+    if (home > away) return "W"
+    if (home < away) return "L"
+    return "D"
+  }
+  
+ 
+  visible.forEach((session) => {
+    const r = getResult(session.score)
+    if (r === "W") wins++
+    else if (r === "L") losses++
+    else draws++
+  })
+
+const avgGoals = visible.length ? totalGoals / visible.length : 0
+const avgLGoals = visible.length ? totalLeftGoals / visible.length : 0
+const avgRGoals = visible.length ? totalRightGoals / visible.length : 0
+const avgHGoals = visible.length ? totalHeadGoals / visible.length : 0
+const avgAssists = visible.length ? totalAssists / visible.length : 0
+const avgSteps = visible.length ? totalSteps / visible.length : 0
+const avgSleep = visible.length ? totalSleepHours / visible.length : 0
+const avgWeatherDegrees = visible.length ? totalWeatherDegrees / visible.length : 0
+
+const totalSessions = visible.length
 
     
 return (
@@ -59,11 +79,11 @@ return (
       style={{ flex: 1 }}
       resizeMode="cover"
     >
-
             <ScrollView>
                 <View style={globalStyles.group}> 
                     <Text style={globalStyles.title}>General</Text>
                     <Text style={globalStyles.statText}>Sessions: {totalSessions}</Text>
+                    <Text style={globalStyles.statText}>W-{wins} D-{draws} L-{losses}</Text>
                     <Text style={globalStyles.statText}>Goals: {totalGoals}</Text>
                     <Text style={globalStyles.statText}>Assists: {totalAssists}</Text>
                     <Text style={globalStyles.statText}>Left Footed Goals: {totalLeftGoals}</Text>
@@ -85,6 +105,18 @@ return (
                 </View>
 
             </ScrollView>
-        </ImageBackground>
+                    <View style={globalStyles.filterButtons}>
+                        <Pressable
+                        style={globalStyles.optionButton}
+                        onPress={() => setFilter("Training")}>
+                            <Text style={globalStyles.optionText}>Training</Text>
+                        </Pressable>
+                        <Pressable
+                        style={globalStyles.optionButton}
+                        onPress={() => setFilter("Match")}>
+                            <Text style={globalStyles.optionText}>Match</Text>
+                      </Pressable>
+                    </View>
+    </ImageBackground>
     )
 }

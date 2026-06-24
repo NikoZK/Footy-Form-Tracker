@@ -201,7 +201,7 @@ export default function CreateSessionScreen({ navigation }) {
                         <TextInput keyboardType="numeric" returnKeyType="done" style={globalStyles.input} value={weatherDegrees} onChangeText={setweatherDegrees} placeholder="How many degrees?" />
                         <TextInput keyboardType="numeric" returnKeyType="done" style={globalStyles.input} value={playersCount} onChangeText={setPlayersCount} placeholder="How many players attending?" />
                         <TextInput keyboardType="numeric" returnKeyType="done" style={globalStyles.input} value={sleepHours} onChangeText={setSleepHours} placeholder="How many hours of sleep?" />
-
+                        
                         {!sessionStarted && <Pressable style={globalStyles.button} onPress={beforeSession}>
                             <Text style={globalStyles.buttonText}>Start session</Text>
                         </Pressable>
@@ -212,7 +212,7 @@ export default function CreateSessionScreen({ navigation }) {
                 {sessionStarted && (
                     <>
                         <View style={globalStyles.group}>
-                            <TextInput style={globalStyles.input} value={score} onChangeText={setScore} placeholder="Final score" />
+                            <TextInput style={globalStyles.input} value={score} onChangeText={setScore} placeholder='Score (Home team first, seperated with "-")' />
                             <TextInput keyboardType="numeric" returnKeyType="done" style={globalStyles.input} value={goalsLeft} onChangeText={setGoalsLeft} placeholder="Goals with left foot" />
                             <TextInput keyboardType="numeric" returnKeyType="done" style={globalStyles.input} value={goalsRight} onChangeText={setGoalsRight} placeholder="Goals with right foot" />
                             <TextInput keyboardType="numeric" returnKeyType="done" style={globalStyles.input} value={goalsHeader} onChangeText={setGoalsHeader} placeholder="Header goals" />

@@ -25,6 +25,19 @@ export default function HistoryScreen({ navigation }) {
     loadSessions()
   }, [])
 
+  function getResult(score) {
+    const [home, away] = score.split("-").map(Number)
+    if (home > away) return "W"
+    if (home < away) return "L"
+    return "D"
+  }
+  
+  function getColor(result) {
+  if (result === "W") return "green"
+  if (result === "L") return "red"
+  return "orange" 
+  }
+
   return (
     <ImageBackground
       source={require("../assets/background.jpg")}
@@ -41,11 +54,23 @@ export default function HistoryScreen({ navigation }) {
               navigation.navigate("HistoryDetail", { session: item })
             }
           >
+            <View style={globalStyles.buttonRow}>
             <Text style={globalStyles.title}>{item.score}</Text>
-            <Text style={globalStyles.label}>
-              G/A: {Number(item.totalGoals) + Number(item.assists)} ║
-              {item.sessionType} ║ {item.date.toDate().toLocaleDateString()}
-            </Text>
+            <Text style={[globalStyles.title, { color: getColor(getResult(item.score)) } ]}>{getResult(item.score)}</Text>
+            </View>
+
+            <View style={globalStyles.buttonRow}>
+              <View style={globalStyles.optionButton}>
+                <Text style={globalStyles.optionText}>
+                  G/A: {Number(item.totalGoals) + Number(item.assists)}
+                </Text>
+              </View>
+              <View style={globalStyles.optionButton}>
+                <Text style={globalStyles.optionText}>
+                  {item.date.toDate().toLocaleDateString()}
+                </Text>
+              </View>
+            </View>
           </Pressable>
         )}
       />
